@@ -42,6 +42,10 @@ def create_goal(db: Session, user_id: int, goal: schemas.GoalCreate):
     return db_goal
 
 
+def get_goals(db: Session, user_id: int):
+    return db.query(models.Goal).filter(models.Goal.user_id == user_id).all()
+
+
 def create_health_metric(db: Session, user_id: int, metric: schemas.HealthMetricCreate):
     db_metric = models.HealthMetric(
         user_id=user_id,
@@ -60,6 +64,10 @@ def create_health_metric(db: Session, user_id: int, metric: schemas.HealthMetric
     return db_metric
 
 
+def get_health_metrics(db: Session, user_id: int):
+    return db.query(models.HealthMetric).filter(models.HealthMetric.user_id == user_id).order_by(models.HealthMetric.date.desc()).all()
+
+
 def create_workout(db: Session, user_id: int, workout: schemas.WorkoutCreate):
     db_workout = models.Workout(
         user_id=user_id,
@@ -74,6 +82,10 @@ def create_workout(db: Session, user_id: int, workout: schemas.WorkoutCreate):
     db.commit()
     db.refresh(db_workout)
     return db_workout
+
+
+def get_workouts(db: Session, user_id: int):
+    return db.query(models.Workout).filter(models.Workout.user_id == user_id).order_by(models.Workout.date.desc()).all()
 
 
 def create_sleep_log(db: Session, user_id: int, sleep_log: schemas.SleepLogCreate):
@@ -91,6 +103,10 @@ def create_sleep_log(db: Session, user_id: int, sleep_log: schemas.SleepLogCreat
     return db_sleep
 
 
+def get_sleep_logs(db: Session, user_id: int):
+    return db.query(models.SleepLog).filter(models.SleepLog.user_id == user_id).order_by(models.SleepLog.date.desc()).all()
+
+
 def create_nutrition_log(db: Session, user_id: int, nutrition_log: schemas.NutritionLogCreate):
     db_food = models.NutritionLog(
         user_id=user_id,
@@ -106,6 +122,10 @@ def create_nutrition_log(db: Session, user_id: int, nutrition_log: schemas.Nutri
     db.commit()
     db.refresh(db_food)
     return db_food
+
+
+def get_nutrition_logs(db: Session, user_id: int):
+    return db.query(models.NutritionLog).filter(models.NutritionLog.user_id == user_id).order_by(models.NutritionLog.date.desc()).all()
 
 
 def get_dashboard_summary(db: Session, user_id: int):
@@ -134,9 +154,12 @@ def get_dashboard_summary(db: Session, user_id: int):
         .first()
     )
 
+    goals = db.query(models.Goal).filter(models.Goal.user_id == user_id).all()
+
     return {
         "user": user.name,
         "latest_metric": latest_metric,
         "latest_workout": latest_workout,
         "latest_sleep": latest_sleep,
+        "goals": goals,
     }

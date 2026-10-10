@@ -53,12 +53,28 @@ def create_user_goal(user_id: int, goal: schemas.GoalCreate, db: Session = Depen
     return crud.create_goal(db=db, user_id=user_id, goal=goal)
 
 
+@app.get("/users/{user_id}/goals", response_model=List[schemas.GoalResponse])
+def list_goals(user_id: int, db: Session = Depends(get_db)):
+    user = crud.get_user(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return crud.get_goals(db, user_id)
+
+
 @app.post("/users/{user_id}/metrics", response_model=schemas.HealthMetricResponse)
 def create_health_metric(user_id: int, metric: schemas.HealthMetricCreate, db: Session = Depends(get_db)):
     user = crud.get_user(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return crud.create_health_metric(db=db, user_id=user_id, metric=metric)
+
+
+@app.get("/users/{user_id}/metrics", response_model=List[schemas.HealthMetricResponse])
+def list_metrics(user_id: int, db: Session = Depends(get_db)):
+    user = crud.get_user(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return crud.get_health_metrics(db, user_id)
 
 
 @app.post("/users/{user_id}/workouts", response_model=schemas.WorkoutResponse)
@@ -69,6 +85,14 @@ def create_workout(user_id: int, workout: schemas.WorkoutCreate, db: Session = D
     return crud.create_workout(db=db, user_id=user_id, workout=workout)
 
 
+@app.get("/users/{user_id}/workouts", response_model=List[schemas.WorkoutResponse])
+def list_workouts(user_id: int, db: Session = Depends(get_db)):
+    user = crud.get_user(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return crud.get_workouts(db, user_id)
+
+
 @app.post("/users/{user_id}/sleep", response_model=schemas.SleepLogResponse)
 def create_sleep_log(user_id: int, sleep_log: schemas.SleepLogCreate, db: Session = Depends(get_db)):
     user = crud.get_user(db, user_id)
@@ -77,12 +101,28 @@ def create_sleep_log(user_id: int, sleep_log: schemas.SleepLogCreate, db: Sessio
     return crud.create_sleep_log(db=db, user_id=user_id, sleep_log=sleep_log)
 
 
+@app.get("/users/{user_id}/sleep", response_model=List[schemas.SleepLogResponse])
+def list_sleep_logs(user_id: int, db: Session = Depends(get_db)):
+    user = crud.get_user(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return crud.get_sleep_logs(db, user_id)
+
+
 @app.post("/users/{user_id}/nutrition", response_model=schemas.NutritionLogResponse)
 def create_nutrition_log(user_id: int, nutrition_log: schemas.NutritionLogCreate, db: Session = Depends(get_db)):
     user = crud.get_user(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return crud.create_nutrition_log(db=db, user_id=user_id, nutrition_log=nutrition_log)
+
+
+@app.get("/users/{user_id}/nutrition", response_model=List[schemas.NutritionLogResponse])
+def list_nutrition_logs(user_id: int, db: Session = Depends(get_db)):
+    user = crud.get_user(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return crud.get_nutrition_logs(db, user_id)
 
 
 @app.get("/users/{user_id}/dashboard")
